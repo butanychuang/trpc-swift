@@ -185,20 +185,22 @@ const trpcProcedureToSwiftMethodAndLocalModels = (name: string, procedure: Gener
         }
 
         const pathMethod = state.routeDepth === 0 ? "appendingPathComponent" : "appendingPathExtension";
-        if (procedure._def.query) {
+        const procedureType = (procedure._def as any).type;
+        
+        if (procedureType === "query") {
             swiftMethod += `${
                 hasOutput ? "return" : "let _: TRPCClient.EmptyObject ="
             } try await TRPCClient.shared.sendQuery(url: url.${pathMethod}("${name}"), middlewares: middlewares, input: ${
                 addedInput ? "input" : "TRPCClient.EmptyObject()"
             })\n`;
-        } else if (procedure._def.mutation) {
+        } else if (procedureType === "mutation") {
             swiftMethod += `${
                 hasOutput ? "return" : "let _: TRPCClient.EmptyObject ="
             } try await TRPCClient.shared.sendMutation(url: url.${pathMethod}("${name}"), middlewares: middlewares, input: ${
                 addedInput ? "input" : "TRPCClient.EmptyObject()"
             })\n`;
         } else {
-            throw new Error("Unsupported procedure type.");
+            throw new Error(`Unsupported procedure type: ${procedureType}`);
         }
 
         swiftMethod += "}\n";
