@@ -60,6 +60,8 @@ export const zodSchemaToSwiftType = (schema: ZodType, state: TRPCSwiftModelState
             case ZodFirstPartyTypeKind.ZodUnknown:
             case ZodFirstPartyTypeKind.ZodAny:
                 return { swiftTypeSignature: "Any" };
+            case ZodFirstPartyTypeKind.ZodDefault:
+                return zodSchemaToSwiftType((schema as any)._def.innerType, state, fallbackName);
             default:
                 break;
         }
