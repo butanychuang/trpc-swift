@@ -15,6 +15,12 @@ export const processFieldName = (name: string): string => {
 
     let processedName = snakeToCamelCase(name);
     processedName = processedName.charAt(0).toLowerCase() + processedName.slice(1);
+    
+    // Check if name starts with a digit (invalid Swift identifier)
+    if (/^\d/.test(processedName)) {
+        processedName = `_${processedName}`;
+    }
+    
     if (reservedFields.includes(processedName)) {
         return `_${name}`;
     }
