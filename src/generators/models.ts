@@ -59,7 +59,9 @@ export const zodSchemaToSwiftType = (schema: ZodType, state: TRPCSwiftModelState
                 return zodEnumToSwiftType(z.enum((schema as ZodLiteral<never>)._def.value), state, fallbackName);
             case ZodFirstPartyTypeKind.ZodUnknown:
             case ZodFirstPartyTypeKind.ZodAny:
-                return { swiftTypeSignature: "Any" };
+                // Use String for unknown types to maintain Codable compatibility
+                // In practice, unknown JSON values are often serialized as strings
+                return { swiftTypeSignature: "String" };
             case ZodFirstPartyTypeKind.ZodDefault:
                 return zodSchemaToSwiftType((schema as any)._def.innerType, state, fallbackName);
             default:
