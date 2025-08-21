@@ -1,5 +1,6 @@
 import {
     AnyZodObject,
+    ZodAny,
     ZodArray,
     ZodEffects,
     ZodEnum,
@@ -56,6 +57,9 @@ export const zodSchemaToSwiftType = (schema: ZodType, state: TRPCSwiftModelState
                 return { swiftTypeSignature: "String" };
             case ZodFirstPartyTypeKind.ZodLiteral:
                 return zodEnumToSwiftType(z.enum((schema as ZodLiteral<never>)._def.value), state, fallbackName);
+            case ZodFirstPartyTypeKind.ZodUnknown:
+            case ZodFirstPartyTypeKind.ZodAny:
+                return { swiftTypeSignature: "Any" };
             default:
                 break;
         }
